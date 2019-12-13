@@ -60,7 +60,7 @@
     </tr>
     <tr>
         @if(!isset($esconde_uso_banco) || !$esconde_uso_banco)
-            <td {{ !isset($mostra_cip) || !$mostra_cip ? 'colspan=2' : ''}}>
+            <td {{ (!isset($mostra_cip) || !$mostra_cip) ? 'colspan=2' : ''}}>
                 <div class="titulo">Uso do banco</div>
                 <div class="conteudo">{{ $uso_banco }}</div>
             </td>
@@ -73,7 +73,7 @@
             </td>
         @endif
 
-        <td {{isset($esconde_uso_banco) && $esconde_uso_banco ? 'colspan=3': '' }}>
+        <td {{(isset($esconde_uso_banco) && $esconde_uso_banco) ? 'colspan=3': '' }}>
             <div class="titulo">Carteira</div>
             <div class="conteudo">{{ $carteira_nome }}</div>
         </td>
