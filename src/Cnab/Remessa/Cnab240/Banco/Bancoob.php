@@ -41,12 +41,6 @@ class Bancoob extends AbstractRemessa implements RemessaContract
     const PROTESTO_NEGATIVAR_DIAS_CORRIDOS = '7';
     const PROTESTO_NAO_NEGATIVAR = '8';
 
-    public function __construct(array $params = [])
-    {
-        parent::__construct($params);
-        $this->addCampoObrigatorio('idremessa');
-    }
-
     /**
      * Código do banco
      *
@@ -74,7 +68,7 @@ class Bancoob extends AbstractRemessa implements RemessaContract
      *
      * @var null
      */
-    protected $fimArquivo = "";
+    protected $fimArquivo = "\n";
 
     /**
      * @param BoletoContract $boleto
@@ -143,7 +137,8 @@ class Bancoob extends AbstractRemessa implements RemessaContract
         $this->add(109, 109, Util::formatCnab('9', $boleto->getAceite() == 'N' ? 'N' : 'A', 1));    //N = Não Aceita     A = Aceite
         $this->add(110, 117, $boleto->getDataDocumento()->format('dmY'));
         $this->add(118, 118, ($boleto->getJuros() !== null && $boleto->getJuros() > 0) ? '2' : '0');    //0 = ISENTO | 1 = R$ ao dia | 2 = % ao mês
-        $this->add(119, 126, ($boleto->getJuros() !== null && $boleto->getJuros() > 0) ? $boleto->getDataVencimento()->format('dmY') : '00000000');        $this->add(127, 141, Util::formatCnab('9', $boleto->getJuros(), 15, 2)); //Taxa mensal
+        $this->add(119, 126, $boleto->getDataVencimento()->addDay()->format('dmY'));
+        $this->add(127, 141, Util::formatCnab('9', $boleto->getJuros(), 15, 2)); //Taxa mensal
         $this->add(142, 142, $boleto->getDesconto() > 0  ? '1' : '0'); //0 = SEM DESCONTO | 1 = VALOR FIXO | 2 = PERCENTUAL
         $this->add(143, 150, $boleto->getDesconto() > 0 ? $boleto->getDataDesconto()->format('dmY') : '00000000');
         $this->add(151, 165, Util::formatCnab('9', $boleto->getDesconto(), 15, 2));
@@ -239,7 +234,8 @@ class Bancoob extends AbstractRemessa implements RemessaContract
         $this->add(43, 50, '00000000');
         $this->add(51, 65, '000000000000000');
         $this->add(66, 66, $boleto->getMulta() > 0 ? '2' : '0'); //0 = ISENTO | 1 = VALOR FIXO | 2 = PERCENTUAL
-        $this->add(67, 74, $boleto->getMulta() > 0 ?  $boleto->getDataVencimento()->format('dmY') : '00000000');        $this->add(75, 89, Util::formatCnab('9', $boleto->getMulta(), 15, 2));  //2,20 = 0000000000220
+        $this->add(67, 74, $boleto->getDataVencimento()->addDay()->format('dmY'));
+        $this->add(75, 89, Util::formatCnab('9', $boleto->getMulta(), 15, 2));  //2,20 = 0000000000220
         $this->add(90, 199, '');
         $this->add(200, 207, '00000000');
         $this->add(208, 210, '000');
@@ -344,7 +340,7 @@ class Bancoob extends AbstractRemessa implements RemessaContract
         $this->add(4, 7, '0001');
         $this->add(8, 8, '5');
         $this->add(9, 17, '');
-        $this->add(18, 23, Util::formatCnab('9', $this->getCountDetalhes() + 2, 6));
+        $this->add(18, 23, Util::formatCnab('9', $this->getCount(), 6));
         $this->add(24, 29, Util::formatCnab('9', count($this->boletos), 6));
         $this->add(30, 46, Util::formatCnab('9', $valor, 17, 2));
         $this->add(47, 52, Util::formatCnab('9', 0, 6));
@@ -368,7 +364,7 @@ class Bancoob extends AbstractRemessa implements RemessaContract
         $this->add(8, 8, '9');
         $this->add(9, 17, '');
         $this->add(18, 23, Util::formatCnab('9', 1, 6));
-        $this->add(24, 29, Util::formatCnab('9', $this->getCount(), 6));
+        $this->add(24, 29, Util::formatCnab('9', $this->getCount() + 4, 6));
         $this->add(30, 35, '000000');
         $this->add(36, 240, '');
 
