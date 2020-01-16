@@ -5,7 +5,6 @@ use Eduardokum\LaravelBoleto\Cnab\Retorno\Cnab400\AbstractRetorno;
 use Eduardokum\LaravelBoleto\Contracts\Boleto\Boleto as BoletoContract;
 use Eduardokum\LaravelBoleto\Contracts\Cnab\RetornoCnab400;
 use Eduardokum\LaravelBoleto\Util;
-use Illuminate\Support\Arr;
 
 class Hsbc extends AbstractRetorno implements RetornoCnab400
 {
@@ -167,12 +166,6 @@ class Hsbc extends AbstractRetorno implements RetornoCnab400
         ];
     }
 
-    /**
-     * @param array $header
-     *
-     * @return bool
-     * @throws \Exception
-     */
     protected function processarHeader(array $header)
     {
         $this->getHeader()
@@ -188,12 +181,6 @@ class Hsbc extends AbstractRetorno implements RetornoCnab400
         return true;
     }
 
-    /**
-     * @param array $detalhe
-     *
-     * @return bool
-     * @throws \Exception
-     */
     protected function processarDetalhe(array $detalhe)
     {
         $d = $this->detalheAtual();
@@ -202,7 +189,7 @@ class Hsbc extends AbstractRetorno implements RetornoCnab400
             ->setNumeroDocumento($this->rem(117, 126, $detalhe))
             ->setNumeroControle($this->rem(38, 62, $detalhe))
             ->setOcorrencia($this->rem(109, 110, $detalhe))
-            ->setOcorrenciaDescricao(Arr::get($this->ocorrencias, $d->getOcorrencia(), 'Desconhecida'))
+            ->setOcorrenciaDescricao(array_get($this->ocorrencias, $d->getOcorrencia(), 'Desconhecida'))
             ->setDataOcorrencia($this->rem(111, 116, $detalhe))
             ->setDataVencimento($this->rem(147, 152, $detalhe))
             ->setValor(Util::nFloat($this->rem(153, 165, $detalhe)/100, 2, false))
@@ -231,7 +218,7 @@ class Hsbc extends AbstractRetorno implements RetornoCnab400
             $d->setOcorrenciaTipo($d::OCORRENCIA_ALTERACAO);
         } elseif ($d->hasOcorrencia('03')) {
             $this->totais['erros']++;
-            $d->setError(Arr::get($this->rejeicoes, $this->rem(302, 303, $detalhe), 'Consulte seu Internet Banking'));
+            $d->setError(array_get($this->rejeicoes, $this->rem(302, 303, $detalhe), 'Consulte seu Internet Banking'));
         } else {
             $d->setOcorrenciaTipo($d::OCORRENCIA_OUTROS);
         }
@@ -239,11 +226,6 @@ class Hsbc extends AbstractRetorno implements RetornoCnab400
         return true;
     }
 
-    /**
-     * @param array $trailer
-     *
-     * @return bool
-     */
     protected function processarTrailer(array $trailer)
     {
         $this->getTrailer()

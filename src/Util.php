@@ -82,7 +82,7 @@ final class Util
         '479' => 'Banco ItaúBank S.A',
         'M09' => 'Banco Itaucred Financiamentos S.A.',
         '376' => 'Banco J. P. Morgan S.A.',
-        '074' => 'Banco J. 074 S.A.',
+        '074' => 'Banco J. Safra S.A.',
         '217' => 'Banco John Deere S.A.',
         '600' => 'Banco Luso Brasileiro S.A.',
         '389' => 'Banco Mercantil do Brasil S.A.',
@@ -99,7 +99,7 @@ final class Util
         'M16' => 'Banco Rodobens S.A.',
         '072' => 'Banco Rural Mais S.A.',
         '453' => 'Banco Rural S.A.',
-        '422' => 'Banco 422 S.A.',
+        '422' => 'Banco Safra S.A.',
         '033' => 'Banco Santander (Brasil) S.A.',
         '749' => 'Banco Simples S.A.',
         '366' => 'Banco Société Générale Brasil S.A.',
@@ -317,7 +317,7 @@ final class Util
 
             'ß' => 'sz', 'þ' => 'thorn', 'º' => '', 'ª' => '', '°' => '',
         );
-        return preg_replace('/[^0-9a-zA-Z !*\-$\(\)\[\]\{\},.;:\/\\#%&@+=]/', '', strtr($string, $normalizeChars));
+        return strtr($string, $normalizeChars);
     }
 
     /**
@@ -372,12 +372,15 @@ final class Util
             }
         }
         $formater->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, $decimals);
-        $pattern = substr($formater->getPattern(), strpos($formater->getPattern(), '#'));
-        if ($symbol) {
-            $pattern = "¤ " . $pattern;
+        if (!$symbol) {
+            $pattern = preg_replace("/[¤]/", '', $formater->getPattern());
+            $formater->setPattern($pattern);
+        } else {
+            // ESPAÇO DEPOIS DO SIMBOLO
+            $pattern = str_replace("¤", "¤ ", $formater->getPattern());
+            $formater->setPattern($pattern);
         }
-        $formater->setPattern($pattern);
-        return trim($formater->formatCurrency($number, $formater->getTextAttribute(\NumberFormatter::CURRENCY_CODE)));
+        return $formater->formatCurrency($number, $formater->getTextAttribute(\NumberFormatter::CURRENCY_CODE));
     }
 
     /**
@@ -471,7 +474,6 @@ final class Util
     public static function formatCnab($tipo, $valor, $tamanho, $dec = 0, $sFill = '')
     {
         $tipo = self::upper($tipo);
-        $valor = self::upper(self::normalizeChars($valor));
         if (in_array($tipo, array('9', 9, 'N', '9L', 'NL'))) {
             if ($tipo == '9L' || $tipo == 'NL') {
                 $valor = self::onlyNumbers($valor);
@@ -484,6 +486,7 @@ final class Util
         } elseif (in_array($tipo, array('A', 'X'))) {
             $left = '-';
             $type = 's';
+            $valor = self::upper(self::normalizeChars($valor));
         } else {
             throw new \Exception('Tipo inválido');
         }
@@ -492,10 +495,9 @@ final class Util
 
     /**
      * @param        Carbon|string $date
-     * @param string               $format
+     * @param string $format
      *
      * @return integer
-     * @throws \Exception
      */
     public static function fatorVencimento($date, $format = 'Y-m-d')
     {
@@ -512,7 +514,7 @@ final class Util
     public static function dataJuliano($date, $format = 'Y-m-d')
     {
         $date = ($date instanceof Carbon) ? $date : Carbon::createFromFormat($format, $date);
-        $dateDiff = $date->copy()->day(31)->month(12)->subYear()->diffInDays($date);
+        $dateDiff = $date->copy()->day(31)->month(12)->subYear(1)->diffInDays($date);
         return $dateDiff . mb_substr($date->year, -1);
     }
 
@@ -524,7 +526,7 @@ final class Util
      */
     public static function fatorVencimentoBack($factor, $format = 'Y-m-d')
     {
-        $date = Carbon::create(1997, 10, 7, 0, 0, 0)->addDays($factor);
+        $date = Carbon::create(1997, 10, 7, 0, 0, 0)->addDay($factor);
         return $format ? $date->format($format) : $date;
     }
 
@@ -542,7 +544,7 @@ final class Util
     {
         $sum = 0;
         for ($i = mb_strlen($n); $i > 0; $i--) {
-            $sum += ((int) mb_substr($n, $i - 1, 1))*$factor;
+            $sum += mb_substr($n, $i - 1, 1)*$factor;
             if ($factor == $base) {
                 $factor = 1;
             }
@@ -606,11 +608,11 @@ final class Util
     /**
      * @param $controle
      *
-     * @return array
+     * @return null|string
      */
     public static function controle2array($controle)
     {
-        $matches = [];
+        $matches = '';
         $matches_founded = [];
         preg_match_all('/(([A-Za-zÀ-Úà-ú]+)([0-9]*))/', $controle, $matches, PREG_SET_ORDER);
         if ($matches) {
@@ -625,7 +627,7 @@ final class Util
     /**
      * Pela remessa cria um retorno fake para testes.
      *
-     * @param $file
+     * @param $file Remessa
      * @param string       $ocorrencia
      *
      * @return string
@@ -703,7 +705,7 @@ final class Util
             case Contracts\Boleto\Boleto::COD_BANCO_BB:
                 if (self::remove(1, 1, $detalhe) != 7) {
                     unset($retorno[$i]);
-                    continue 2;
+                    continue;
                 }
                 self::adiciona($retorno[$i], 1, 1, '7');
                 self::adiciona($retorno[$i], 64, 80, self::remove(64, 80, $detalhe));

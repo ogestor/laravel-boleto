@@ -6,7 +6,6 @@ use Eduardokum\LaravelBoleto\Cnab\Retorno\Cnab240\AbstractRetorno;
 use Eduardokum\LaravelBoleto\Contracts\Boleto\Boleto as BoletoContract;
 use Eduardokum\LaravelBoleto\Contracts\Cnab\RetornoCnab240;
 use Eduardokum\LaravelBoleto\Util;
-use Illuminate\Support\Arr;
 
 class Bancoob extends AbstractRetorno implements RetornoCnab240
 {
@@ -282,7 +281,7 @@ class Bancoob extends AbstractRetorno implements RetornoCnab240
 
         if ($this->getSegmentType($detalhe) == 'T') {
             $d->setOcorrencia($this->rem(16, 17, $detalhe))
-                ->setOcorrenciaDescricao(Arr::get($this->ocorrencias, $this->detalheAtual()->getOcorrencia(), 'Desconhecida'))
+                ->setOcorrenciaDescricao(array_get($this->ocorrencias, $this->detalheAtual()->getOcorrencia(), 'Desconhecida'))
                 ->setNossoNumero($this->rem(38, 47, $detalhe))
                 ->setCarteira($this->rem(58, 58, $detalhe))
                 ->setNumeroDocumento($this->rem(59, 73, $detalhe))
@@ -320,11 +319,11 @@ class Bancoob extends AbstractRetorno implements RetornoCnab240
             } elseif ($d->hasOcorrencia('03', '26', '30')) {
                 $this->totais['erros']++;
                 $error = Util::appendStrings(
-                    Arr::get($this->rejeicoes, $msgAdicional[0], ''),
-                    Arr::get($this->rejeicoes, $msgAdicional[1], ''),
-                    Arr::get($this->rejeicoes, $msgAdicional[2], ''),
-                    Arr::get($this->rejeicoes, $msgAdicional[3], ''),
-                    Arr::get($this->rejeicoes, $msgAdicional[4], '')
+                    array_get($this->rejeicoes, $msgAdicional[0], ''),
+                    array_get($this->rejeicoes, $msgAdicional[1], ''),
+                    array_get($this->rejeicoes, $msgAdicional[2], ''),
+                    array_get($this->rejeicoes, $msgAdicional[3], ''),
+                    array_get($this->rejeicoes, $msgAdicional[4], '')
                 );
                 $d->setError($error);
             } else {
@@ -338,6 +337,7 @@ class Bancoob extends AbstractRetorno implements RetornoCnab240
                 ->setValorAbatimento(Util::nFloat($this->rem(48, 62, $detalhe)/100, 2, false))
                 ->setValorIOF(Util::nFloat($this->rem(63, 77, $detalhe)/100, 2, false))
                 ->setValorRecebido(Util::nFloat($this->rem(78, 92, $detalhe)/100, 2, false))
+                ->setValorRecebido(Util::nFloat($this->rem(93, 107, $detalhe)/100, 2, false))
                 ->setDataOcorrencia($this->rem(138, 145, $detalhe))
                 ->setDataCredito($this->rem(146, 153, $detalhe));
         }

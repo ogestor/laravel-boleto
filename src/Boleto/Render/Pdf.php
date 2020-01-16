@@ -142,10 +142,10 @@ class Pdf extends AbstractPdf implements PdfContract
 
         $this->SetFont($this->PadraoFont, '', $this->fdes);
         $this->Cell(75, $this->desc, $this->_('Beneficiário'), 'TLR');
-        $this->Cell(35, $this->desc, $this->_('Agência/Código do beneficiário'), 'TR');
+        $this->Cell(35, $this->desc, $this->_('Agencia/Codigo do beneficiário'), 'TR');
         $this->Cell(10, $this->desc, $this->_('Espécie'), 'TR');
         $this->Cell(15, $this->desc, $this->_('Quantidade'), 'TR');
-        $this->Cell(35, $this->desc, $this->_('Nosso Número'), 'TR', 1);
+        $this->Cell(35, $this->desc, $this->_('Nosso Numero'), 'TR', 1);
 
         $this->SetFont($this->PadraoFont, 'B', $this->fcel);
 
@@ -233,16 +233,7 @@ class Pdf extends AbstractPdf implements PdfContract
 
         $this->SetFont($this->PadraoFont, 'B', $this->fcel);
         $this->Cell(120, $this->cell, $this->_($this->boleto[$i]->getBeneficiario()->getNomeDocumento()), 'LR');
-        $xBeneficiario = $this->GetX();
-        $yBeneficiario = $this->GetY();
         $this->Cell(50, $this->cell, $this->_($this->boleto[$i]->getAgenciaCodigoBeneficiario()), 'R', 1, 'R');
-        if($this->boleto[$i]->getMostrarEnderecoFichaCompensacao()) {
-            $this->SetXY($xBeneficiario, $yBeneficiario);
-            $this->Ln(4);
-            $this->SetFont($this->PadraoFont, 'B', $this->fcel);
-            $this->Cell(120, $this->cell, $this->_($this->boleto[$i]->getBeneficiario()->getEnderecoCompleto()), 'LR');
-            $this->Cell(50, $this->cell, "", 'R', 1, 'R');
-        }
 
         $this->SetFont($this->PadraoFont, '', $this->fdes);
         $this->Cell(30, $this->desc, $this->_('Data do documento'), 'TLR');
@@ -397,6 +388,38 @@ class Pdf extends AbstractPdf implements PdfContract
     }
 
     /**
+     * Gerando página de envelope
+     */
+    protected function Envelope($i)
+    {
+        $this->Image($this->boleto[$i]->getLogoBanco(), 12, $this->GetY() + 8, 40);
+        $this->SetXY(12, $this->GetY() + 23);
+        $this->SetFont($this->PadraoFont, 'B', 9);
+        $this->Cell($this->w - 24, $this->cell + 3, $this->boleto[$i]->getBeneficiario()->getNome(), 'TBRL', 1, 'C');
+        $this->SetFont($this->PadraoFont, 'B', $this->fcel);
+        $this->SetXY(11, $this->GetY() - 1);
+        $this->Cell(78, $this->cell + 8, $this->_('Destinatário: ' . $this->boleto[$i]->getPagador()->getNome()), 0, 0);
+        $this->SetXY(11, $this->GetY() + 4);
+        $this->Cell(78, $this->cell + 8, $this->_('Endereço: ' . $this->boleto[$i]->getPagador()->getEndereco()), 0, 0);
+        $this->SetXY(11, $this->GetY() + 4);
+        $this->Cell(78, $this->cell + 8, $this->_('CEP: ' . $this->boleto[$i]->getPagador()->getCepCidadeUf()), 0, 0);
+        $this->SetXY(12, $this->GetY() + 4);
+        $this->Cell($this->w - 24, $this->cell + 35, '', 'B', 0, 'C');
+        $this->SetXY(11, $this->GetY() + 108);
+        $this->Cell($this->w - 24, $this->cell, $this->_($this->boleto[$i]->getBeneficiario()->getNome()), 0, 1);
+        $this->SetXY(12, $this->GetY());
+        $this->Cell($this->w - 24, $this->cell, '', 'B', 0, 'C');
+        $this->SetXY(11, $this->GetY() + 2);
+        $this->Cell(78, $this->cell + 8, $this->_('Remetente: ' . $this->boleto[$i]->getBeneficiario()->getNome()), 0, 0);
+        $this->SetXY(11, $this->GetY() + 4);
+        $this->Cell(78, $this->cell + 8, $this->_('Endereço: ' . $this->boleto[$i]->getBeneficiario()->getEndereco()), 0, 0);
+        $this->SetXY(11, $this->GetY() + 4);
+        $this->Cell(78, $this->cell + 8, $this->_('CEP: ' . $this->boleto[$i]->getBeneficiario()->getCepCidadeUf()), 0, 0);
+        $this->SetXY(11, $this->GetY() + 63);
+        $this->Image($this->boleto[$i]->getRodapeEnvelope(), 11, $this->GetY() + 8, $this->w - 22);
+    }
+
+    /**
      * Addiciona o boletos
      *
      * @param array $boletos
@@ -468,6 +491,10 @@ class Pdf extends AbstractPdf implements PdfContract
             $this->SetDrawColor('0', '0', '0');
             $this->AddPage();
             $this->instrucoes($i)->logoEmpresa($i)->Topo($i)->Bottom($i)->codigoBarras($i);
+            if ($this->boleto[$i]->getEnvelope()) {
+                $this->AddPage();
+                $this->Envelope($i);
+            }
         }
         if ($dest == self::OUTPUT_SAVE) {
             $this->Output($save_path, $dest, $this->print);

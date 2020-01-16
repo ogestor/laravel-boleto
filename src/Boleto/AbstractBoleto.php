@@ -5,7 +5,6 @@ namespace Eduardokum\LaravelBoleto\Boleto;
 use Carbon\Carbon;
 use Eduardokum\LaravelBoleto\Boleto\Render\Html;
 use Eduardokum\LaravelBoleto\Boleto\Render\Pdf;
-use Eduardokum\LaravelBoleto\Boleto\Render\PdfCaixa;
 use Eduardokum\LaravelBoleto\Contracts\Boleto\Boleto;
 use Eduardokum\LaravelBoleto\Contracts\Pessoa as PessoaContract;
 use Eduardokum\LaravelBoleto\Contracts\Boleto\Boleto as BoletoContract;
@@ -130,18 +129,6 @@ abstract class AbstractBoleto implements BoletoContract
      * @var array
      */
     protected $especiesCodigo = [];
-    /**
-     * Espécie do documento, coódigo para remessa
-     *
-     * @var array
-     */
-    protected $especiesCodigo240 = [];
-    /**
-     * Espécie do documento, coódigo para remessa
-     *
-     * @var array
-     */
-    protected $especiesCodigo400 = [];
     /**
      * Número do documento
      *
@@ -302,18 +289,19 @@ abstract class AbstractBoleto implements BoletoContract
     private $status_custom = null;
 
     /**
-     * Mostrar o endereço do beneficiário abaixo da razão e CNPJ na ficha de compensação
-     *
      * @var boolean
      */
-    protected $mostrarEnderecoFichaCompensacao = false;
+    private $envelope = false;
 
     /**
-     * AbstractBoleto constructor.
+     * @var string
+     */
+    private $rodape_envelope;
+
+    /**
+     * Construtor
      *
-     * @param array $params
-     *
-     * @throws \Exception
+     * @param array $params Parâmetros iniciais para construção do objeto
      */
     public function __construct($params = [])
     {
@@ -666,21 +654,13 @@ abstract class AbstractBoleto implements BoletoContract
      * Retorna o codigo da Espécie Doc
      *
      * @param int $default
-     * @param int $tipo
      *
      * @return string
      */
-    public function getEspecieDocCodigo($default = 99, $tipo = 240)
+    public function getEspecieDocCodigo($default = 99)
     {
-        if (!empty($this->especiesCodigo240) && $tipo == 240) {
-            $especie = $this->especiesCodigo240;
-        } elseif(!empty($this->especiesCodigo400) && $tipo == 400) {
-            $especie = $this->especiesCodigo400;
-        } else {
-            $especie = $this->especiesCodigo;
-        }
-        return key_exists(strtoupper($this->especieDoc), $especie)
-            ? $especie[strtoupper($this->getEspecieDoc())]
+        return key_exists(strtoupper($this->especieDoc), $this->especiesCodigo)
+            ? $this->especiesCodigo[strtoupper($this->getEspecieDoc())]
             : $default;
     }
 
@@ -1126,7 +1106,7 @@ abstract class AbstractBoleto implements BoletoContract
      */
     public function getMoraDia()
     {
-        if ($this->getJuros() <= 0) {
+        if (!$this->getJuros() > 0) {
            return 0;
         }
         return Util::percent($this->getValor(), $this->getJuros())/30;
@@ -1192,6 +1172,8 @@ abstract class AbstractBoleto implements BoletoContract
      * Seta dias para baixa automática
      *
      * @param int $baixaAutomatica
+     *
+     * @return AbstractBoleto
      * @throws \Exception
      */
     public function setDiasBaixaAutomatica($baixaAutomatica)
@@ -1248,6 +1230,27 @@ abstract class AbstractBoleto implements BoletoContract
     }
 
     /**
+     * Retorna a localização do logotipo
+     *
+     * @return string
+     */
+    public function getRodapeEnvelope()
+    {
+        return realpath(__DIR__ . '/../../logos/envelope_rodape.png');
+    }
+
+    /**
+     * Retorna o logotipo em Base64, pronto para ser inserido na página
+     *
+     * @return string
+     */
+    public function getRodapeEnvelopeBase64()
+    {
+        return 'data:image/' . pathinfo($this->getRodapeEnvelope(), PATHINFO_EXTENSION) .
+            ';base64,' . base64_encode(file_get_contents($this->getRodapeEnvelope()));
+    }
+
+    /**
      * Retorna a localização do logotipo do banco relativo à pasta de imagens
      *
      * @return string
@@ -1291,8 +1294,6 @@ abstract class AbstractBoleto implements BoletoContract
 
     /**
      * Comandar instrução custom
-     *
-     * @param $instrucao
      *
      * @return AbstractBoleto
      */
@@ -1384,8 +1385,6 @@ abstract class AbstractBoleto implements BoletoContract
 
     /**
      * Método que valida se o banco tem todos os campos obrigadotorios preenchidos
-     *
-     * @param $messages
      *
      * @return boolean
      */
@@ -1506,26 +1505,6 @@ abstract class AbstractBoleto implements BoletoContract
     }
 
     /**
-     * Retorna se a segunda linha contendo o endereço do beneficiário deve ser exibida na ficha de compensação
-     *
-     * @return bool
-     */
-    public function getMostrarEnderecoFichaCompensacao()
-    {
-        return $this->mostrarEnderecoFichaCompensacao;
-    }
-
-    /**
-     * Seta se a segunda linha contendo o endereço do beneficiário deve ser exibida na ficha de compensação
-     *
-     * @param bool $mostrarEnderecoFichaCompensacao
-     */
-    public function setMostrarEnderecoFichaCompensacao($mostrarEnderecoFichaCompensacao)
-    {
-        $this->mostrarEnderecoFichaCompensacao = $mostrarEnderecoFichaCompensacao;
-    }
-
-    /**
      * Render PDF
      *
      * @param bool $print
@@ -1534,13 +1513,9 @@ abstract class AbstractBoleto implements BoletoContract
      * @return string
      * @throws \Exception
      */
-     public function renderPDF($print = false, $instrucoes = true)
+    public function renderPDF($print = false, $instrucoes = true)
     {
-        if($this->codigoBanco == 104){
-           $pdf = new PdfCaixa();
-        }else{
-           $pdf = new Pdf();
-        }
+        $pdf = new Pdf();
         $pdf->addBoleto($this);
         !$print || $pdf->showPrint();
         $instrucoes || $pdf->hideInstrucoes();
@@ -1587,6 +1562,28 @@ abstract class AbstractBoleto implements BoletoContract
     }
 
     /**
+     * Verifica se o boleto é envelope ou não
+     * @return boolean
+     */
+    public function getEnvelope() {
+        return $this->envelope;
+    }
+
+    /**
+     * Define se o boleto vai ser um envelope ou não
+     *
+     * @param  boolean $dataDocumento
+     *
+     * @return AbstractBoleto
+     */
+    public function setEnvelope($envelope)
+    {
+        $this->envelope = $envelope;
+
+        return $this;
+    }
+
+    /**
      * Return Boleto Array.
      *
      * @return array
@@ -1608,7 +1605,6 @@ abstract class AbstractBoleto implements BoletoContract
                     'documento' => $this->getBeneficiario()->getDocumento(),
                     'nome_documento' => $this->getBeneficiario()->getNomeDocumento(),
                     'endereco2' => $this->getBeneficiario()->getCepCidadeUf(),
-                    'endereco_completo' => $this->getBeneficiario()->getEnderecoCompleto(),
                 ],
                 'logo_base64' => $this->getLogoBase64(),
                 'logo' => $this->getLogo(),
@@ -1639,7 +1635,6 @@ abstract class AbstractBoleto implements BoletoContract
                         'documento' => $this->getSacadorAvalista()->getDocumento(),
                         'nome_documento' => $this->getSacadorAvalista()->getNomeDocumento(),
                         'endereco2' => $this->getSacadorAvalista()->getCepCidadeUf(),
-						'endereco_completo' => $this->getSacadorAvalista()->getEnderecoCompleto(),
                     ]
                         : [],
                 'pagador' => [
@@ -1652,7 +1647,6 @@ abstract class AbstractBoleto implements BoletoContract
                     'documento' => $this->getPagador()->getDocumento(),
                     'nome_documento' => $this->getPagador()->getNomeDocumento(),
                     'endereco2' => $this->getPagador()->getCepCidadeUf(),
-					'endereco_completo' => $this->getPagador()->getEnderecoCompleto(),
                 ],
                 'demonstrativo' => $this->getDescricaoDemonstrativo(),
                 'instrucoes' => $this->getInstrucoes(),
@@ -1671,7 +1665,8 @@ abstract class AbstractBoleto implements BoletoContract
                 'carteira_nome' => $this->getCarteiraNome(),
                 'uso_banco' => $this->getUsoBanco(),
                 'status' => $this->getStatus(),
-                'mostrar_endereco_ficha_compensacao' => $this->getMostrarEnderecoFichaCompensacao()
+                'envelope' => $this->getEnvelope(),
+                'rodape_envelope' => $this->getRodapeEnvelopeBase64()
             ], $this->variaveis_adicionais
         );
     }

@@ -21,11 +21,10 @@
             <div class="conteudo rtl">{{ $data_vencimento->format('d/m/Y') }}</div>
         </td>
     </tr>
-    <tr class="@if($mostrar_endereco_ficha_compensacao) duas-linhas @endif">
+    <tr>
         <td colspan="7">
             <div class="titulo">Beneficiário</div>
             <div class="conteudo">{{ $beneficiario['nome_documento'] }}</div>
-            @if($mostrar_endereco_ficha_compensacao)<div class="conteudo">{{ $beneficiario['endereco_completo'] }}</div>@endif
         </td>
         <td>
             <div class="titulo">Agência/Código beneficiário</div>
@@ -73,7 +72,7 @@
             </td>
         @endif
 
-        <td {{(isset($esconde_uso_banco) && $esconde_uso_banco) ? 'colspan=3': '' }}>
+        <td {{isset($esconde_uso_banco) && $esconde_uso_banco ? 'colspan=3': '' }}>
             <div class="titulo">Carteira</div>
             <div class="conteudo">{{ $carteira_nome }}</div>
         </td>

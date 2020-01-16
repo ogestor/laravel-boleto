@@ -44,7 +44,7 @@ class RetornoCnab400Test extends TestCase
         $this->assertEquals(3, $retorno->key());
         $this->assertInstanceOf(Detalhe::class, $retorno->current());
 
-        $this->expectException(\Exception::class);
+        $this->setExpectedException(\Exception::class);
         $retorno->seek(100);
     }
 
