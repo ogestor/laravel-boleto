@@ -1,8 +1,8 @@
 {
-    "name": "eduardokum/laravel-boleto",
+    "name": "ogestor/laravel-boleto",
     "description": "Biblioteca com boletos para o laravel",
     "keywords": [
-        "eduardokum",
+        "ogestor",
         "laravel-boleto"
     ],
     "homepage": "https://github.com/eduardokum/laravel-boleto",
@@ -31,12 +31,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Eduardokum\\LaravelBoleto\\": "src"
+            "oGestor\\LaravelBoleto\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Eduardokum\\LaravelBoleto\\Tests\\": "tests"
+            "oGestor\\LaravelBoleto\\Tests\\": "tests"
         }
     }
 }
