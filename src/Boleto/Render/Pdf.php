@@ -1,10 +1,10 @@
 <?php
 
-namespace Eduardokum\LaravelBoleto\Boleto\Render;
+namespace oGestor\LaravelBoleto\Boleto\Render;
 
-use Eduardokum\LaravelBoleto\Contracts\Boleto\Boleto as BoletoContract;
-use Eduardokum\LaravelBoleto\Contracts\Boleto\Render\Pdf as PdfContract;
-use Eduardokum\LaravelBoleto\Util;
+use oGestor\LaravelBoleto\Contracts\Boleto\Boleto as BoletoContract;
+use oGestor\LaravelBoleto\Contracts\Boleto\Render\Pdf as PdfContract;
+use oGestor\LaravelBoleto\Util;
 
 class Pdf extends AbstractPdf implements PdfContract
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Eduardokum\LaravelBoleto\Tests;
+namespace oGestor\LaravelBoleto\Tests;
 
-use Eduardokum\LaravelBoleto\Pessoa;
-use Eduardokum\LaravelBoleto\Util;
+use oGestor\LaravelBoleto\Pessoa;
+use oGestor\LaravelBoleto\Util;
 
 class UtilTest extends TestCase
 {

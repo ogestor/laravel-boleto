@@ -1,5 +1,5 @@
 <?php
-namespace Eduardokum\LaravelBoleto\Contracts;
+namespace oGestor\LaravelBoleto\Contracts;
 
 interface Pessoa
 {

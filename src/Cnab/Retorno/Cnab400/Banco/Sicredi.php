@@ -1,10 +1,10 @@
 <?php
-namespace Eduardokum\LaravelBoleto\Cnab\Retorno\Cnab400\Banco;
+namespace oGestor\LaravelBoleto\Cnab\Retorno\Cnab400\Banco;
 
-use Eduardokum\LaravelBoleto\Cnab\Retorno\Cnab400\AbstractRetorno;
-use Eduardokum\LaravelBoleto\Contracts\Boleto\Boleto as BoletoContract;
-use Eduardokum\LaravelBoleto\Contracts\Cnab\RetornoCnab400;
-use Eduardokum\LaravelBoleto\Util;
+use oGestor\LaravelBoleto\Cnab\Retorno\Cnab400\AbstractRetorno;
+use oGestor\LaravelBoleto\Contracts\Boleto\Boleto as BoletoContract;
+use oGestor\LaravelBoleto\Contracts\Cnab\RetornoCnab400;
+use oGestor\LaravelBoleto\Util;
 
 class Sicredi extends AbstractRetorno implements RetornoCnab400
 {

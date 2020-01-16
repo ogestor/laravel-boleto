@@ -1,9 +1,9 @@
 <?php
-namespace Eduardokum\LaravelBoleto\Boleto\Banco;
+namespace oGestor\LaravelBoleto\Boleto\Banco;
 
-use Eduardokum\LaravelBoleto\Boleto\AbstractBoleto;
-use Eduardokum\LaravelBoleto\Contracts\Boleto\Boleto as BoletoContract;
-use Eduardokum\LaravelBoleto\Util;
+use oGestor\LaravelBoleto\Boleto\AbstractBoleto;
+use oGestor\LaravelBoleto\Contracts\Boleto\Boleto as BoletoContract;
+use oGestor\LaravelBoleto\Util;
 
 class Hsbc  extends AbstractBoleto implements BoletoContract
 {

@@ -1,7 +1,7 @@
 <?php
-namespace Eduardokum\LaravelBoleto\Cnab\Remessa\Cnab400;
+namespace oGestor\LaravelBoleto\Cnab\Remessa\Cnab400;
 
-use Eduardokum\LaravelBoleto\Cnab\Remessa\AbstractRemessa as AbstractRemessaGeneric;
+use oGestor\LaravelBoleto\Cnab\Remessa\AbstractRemessa as AbstractRemessaGeneric;
 use ForceUTF8\Encoding;
 
 abstract class AbstractRemessa extends AbstractRemessaGeneric

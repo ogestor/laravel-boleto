@@ -1,7 +1,7 @@
 <?php
-namespace Eduardokum\LaravelBoleto;
+namespace oGestor\LaravelBoleto;
 
-use Eduardokum\LaravelBoleto\Contracts\Pessoa as PessoaContract;
+use oGestor\LaravelBoleto\Contracts\Pessoa as PessoaContract;
 
 class Pessoa implements PessoaContract
 {

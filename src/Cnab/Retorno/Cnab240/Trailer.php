@@ -1,9 +1,9 @@
 <?php
 
-namespace Eduardokum\LaravelBoleto\Cnab\Retorno\Cnab240;
+namespace oGestor\LaravelBoleto\Cnab\Retorno\Cnab240;
 
-use \Eduardokum\LaravelBoleto\Contracts\Cnab\Retorno\Cnab240\Trailer as TrailerContract;
-use Eduardokum\LaravelBoleto\MagicTrait;
+use \oGestor\LaravelBoleto\Contracts\Cnab\Retorno\Cnab240\Trailer as TrailerContract;
+use oGestor\LaravelBoleto\MagicTrait;
 
 class Trailer implements TrailerContract
 {

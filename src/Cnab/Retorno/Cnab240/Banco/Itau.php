@@ -1,11 +1,11 @@
 <?php
 
-namespace Eduardokum\LaravelBoleto\Cnab\Retorno\Cnab240\Banco;
+namespace oGestor\LaravelBoleto\Cnab\Retorno\Cnab240\Banco;
 
-use Eduardokum\LaravelBoleto\Cnab\Retorno\Cnab240\AbstractRetorno;
-use Eduardokum\LaravelBoleto\Contracts\Boleto\Boleto as BoletoContract;
-use Eduardokum\LaravelBoleto\Contracts\Cnab\RetornoCnab240;
-use Eduardokum\LaravelBoleto\Util;
+use oGestor\LaravelBoleto\Cnab\Retorno\Cnab240\AbstractRetorno;
+use oGestor\LaravelBoleto\Contracts\Boleto\Boleto as BoletoContract;
+use oGestor\LaravelBoleto\Contracts\Cnab\RetornoCnab240;
+use oGestor\LaravelBoleto\Util;
 
 class Itau extends AbstractRetorno implements RetornoCnab240
 {

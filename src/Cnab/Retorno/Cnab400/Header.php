@@ -1,9 +1,9 @@
 <?php
-namespace Eduardokum\LaravelBoleto\Cnab\Retorno\Cnab400;
+namespace oGestor\LaravelBoleto\Cnab\Retorno\Cnab400;
 
 use Carbon\Carbon;
-use Eduardokum\LaravelBoleto\Contracts\Cnab\Retorno\Cnab400\Header as HeaderContract;
-use Eduardokum\LaravelBoleto\MagicTrait;
+use oGestor\LaravelBoleto\Contracts\Cnab\Retorno\Cnab400\Header as HeaderContract;
+use oGestor\LaravelBoleto\MagicTrait;
 
 class Header implements HeaderContract
 {

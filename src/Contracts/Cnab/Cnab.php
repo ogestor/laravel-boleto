@@ -1,5 +1,5 @@
 <?php
-namespace Eduardokum\LaravelBoleto\Contracts\Cnab;
+namespace oGestor\LaravelBoleto\Contracts\Cnab;
 
 interface Cnab
 {
