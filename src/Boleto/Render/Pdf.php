@@ -400,7 +400,7 @@ class Pdf extends AbstractPdf implements PdfContract
         $this->SetXY(11, $this->GetY() - 1);
         $this->Cell(78, $this->cell + 8, $this->_('Destinatário: ' . $this->boleto[$i]->getPagador()->getNome()), 0, 0);
         $this->SetXY(11, $this->GetY() + 4);
-        $this->Cell(78, $this->cell + 8, $this->_('Endereço: ' . $this->boleto[$i]->getPagador()->getEndereco()), 0, 0);
+        $this->Cell(78, $this->cell + 8, $this->_(trim($this->boleto[$i]->getPagador()->getEndereco() . ' - ' . $this->boleto[$i]->getPagador()->getBairro()), ' -'), 0, 0);
         $this->SetXY(11, $this->GetY() + 4);
         $this->Cell(78, $this->cell + 8, $this->_('CEP: ' . $this->boleto[$i]->getPagador()->getCepCidadeUf()), 0, 0);
         $this->SetXY(12, $this->GetY() + 4);
