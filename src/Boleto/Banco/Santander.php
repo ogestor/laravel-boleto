@@ -32,7 +32,7 @@ class Santander  extends AbstractBoleto implements BoletoContract
      * @var string
      */
     protected $especiesCodigo = [
-        'DM' => '02',
+        'DM' => '01',
         'DS' => '04',
         'LC' => '07',
         'NP' => '12',
