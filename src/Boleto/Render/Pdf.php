@@ -237,11 +237,16 @@ class Pdf extends AbstractPdf implements PdfContract
         $yBeneficiario = $this->GetY();
         $this->Cell(50, $this->cell, $this->_($this->boleto[$i]->getAgenciaCodigoBeneficiario()), 'R', 1, 'R');
         if($this->boleto[$i]->getMostrarEnderecoFichaCompensacao()) {
+            $this->Cell(170, $this->cell, "", 'R', 1, 'R');
+            $this->Cell(170, $this->cell, "", 'R', 1, 'R');
+            $this->Cell(170, $this->cell, "", 'R', 1, 'R');
+            $this->Cell(170, $this->cell, "", 'R', 1, 'R');
+            $this->Cell(170, $this->cell, "", 'R', 1, 'R');
+
             $this->SetXY($xBeneficiario, $yBeneficiario);
             $this->Ln(4);
             $this->SetFont($this->PadraoFont, 'B', $this->fcel);
-            $this->Cell(120, $this->cell, $this->_($this->boleto[$i]->getBeneficiario()->getEnderecoCompleto()), 'LR');
-            $this->Cell(50, $this->cell, "", 'R', 1, 'R');
+            $this->MultiCell(120, $this->cell, $this->_($this->boleto[$i]->getBeneficiario()->getEnderecoCompleto()), 'LR', 1);
         }
 
         $this->SetFont($this->PadraoFont, '', $this->fdes);
