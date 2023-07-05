@@ -664,11 +664,25 @@ abstract class AbstractBoleto implements BoletoContract
      *
      * @return string
      */
-    public function getEspecieDocCodigo($default = 99)
+    
+    /*public function getEspecieDocCodigo($default = 99)
     {
         return key_exists(strtoupper($this->especieDoc), $this->especiesCodigo)
             ? $this->especiesCodigo[strtoupper($this->getEspecieDoc())]
             : $default;
+    }*/
+    
+    public function getEspecieDocCodigo($default = 0)
+    {
+        if (! empty($this->especiesCodigo240) && $default == 240) {
+            $especie = $this->especiesCodigo240;
+        } elseif(! empty($this->especiesCodigo400) && $default == 400) {
+            $especie = $this->especiesCodigo400;
+        } else {
+            $especie = $this->especiesCodigo;
+        }
+        
+        return key_exists(strtoupper($this->especieDoc), $especie) ? $especie[strtoupper($this->getEspecieDoc())] : $this->getEspecieDoc();
     }
 
     /**
