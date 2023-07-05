@@ -44,6 +44,42 @@ class Santander  extends AbstractBoleto implements BoletoContract
         'CH' => '97',
         'ND' => '98'
     ];
+    
+    /**
+    * Espécie do documento, código para remessa 240
+    *
+    * @var string
+    */
+    protected $especiesCodigo240 = [
+        'DM' => '02',
+        'DS' => '04',
+        'LC' => '07',
+        'NP' => '12',
+        'NR' => '13',
+        'RC' => '17',
+        'AP' => '20',
+        'BCC' => '31',
+        'BDP' => '32',
+        'CH' => '97',
+        'ND' => '98'
+    ];
+    
+    /**
+    * Espécie do documento, código para remessa 400
+    *
+    * @var string
+    */
+    protected $especiesCodigo400 = [
+        'DM' => '01',
+        'NP' => '02',
+        'AP' => '03',
+        'RC' => '05',
+        'DP' => '06',
+        'LC' => '07',
+        'BDP' => '08',
+        'BCC' => '19',
+    ];
+    
     /**
      * Define os nomes das carteiras para exibição no boleto
      *
